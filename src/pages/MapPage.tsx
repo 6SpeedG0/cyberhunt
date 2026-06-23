@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
+import { geoAlbersUsa, geoPath } from 'd3-geo'
+import { feature } from 'topojson-client'
+import type { Topology, Objects } from 'topojson-specification'
 import { supabase } from '../lib/supabase'
 import type { Company } from '../types/company'
 
@@ -25,7 +27,7 @@ const ABBR_TO_NAME = Object.fromEntries(
   Object.entries(STATE_ABBR).map(([name, abbr]) => [abbr, name])
 )
 
-function stateColor(count: number, selected: boolean): string {
+function stateFill(count: number, selected: boolean): string {
   if (selected) return '#c084fc'
   if (count === 0) return '#111318'
   if (count <= 2) return '#2d1b4e'
@@ -42,26 +44,47 @@ const CATEGORY_COLORS: Record<Company['category'], string> = {
 }
 
 const CATEGORY_LABELS: Record<Company['category'], string> = {
-  govcon: 'GovCon',
-  vendor: 'Vendor',
-  consulting: 'Consulting',
-  staffing: 'Staffing',
+  govcon: 'GovCon', vendor: 'Vendor', consulting: 'Consulting', staffing: 'Staffing',
+}
+
+type StateFeature = {
+  id: string
+  name: string
+  abbr: string
+  path: string
 }
 
 export default function MapPage() {
+  const [stateFeatures, setStateFeatures] = useState<StateFeature[]>([])
   const [companies, setCompanies] = useState<Company[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedState, setSelectedState] = useState<string | null>(null)
   const [hovered, setHovered] = useState<string | null>(null)
 
   useEffect(() => {
-    supabase
-      .from('companies')
-      .select('*')
-      .then(({ data }) => {
-        setCompanies(data ?? [])
-        setLoading(false)
+    const projection = geoAlbersUsa().scale(1000).translate([487, 305])
+    const pathGen = geoPath(projection)
+
+    Promise.all([
+      fetch(GEO_URL).then(r => r.json()),
+      supabase.from('companies').select('*'),
+    ]).then(([topo, { data }]) => {
+      const topology = topo as Topology<Objects>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const geojson = feature(topology, topology.objects.states as any) as unknown as GeoJSON.FeatureCollection
+      const features: StateFeature[] = geojson.features.map(f => {
+        const name = (f.properties?.name as string) ?? ''
+        return {
+          id: String(f.id),
+          name,
+          abbr: STATE_ABBR[name] ?? '',
+          path: pathGen(f) ?? '',
+        }
       })
+      setStateFeatures(features)
+      setCompanies(data ?? [])
+      setLoading(false)
+    })
   }, [])
 
   const byState = useMemo(() => {
@@ -74,11 +97,7 @@ export default function MapPage() {
     return map
   }, [companies])
 
-  const nationalCount = useMemo(
-    () => companies.filter(c => c.state === 'national').length,
-    [companies]
-  )
-
+  const nationalCount = companies.filter(c => c.state === 'national').length
   const selectedCompanies = selectedState ? (byState[selectedState] ?? []) : []
 
   return (
@@ -108,48 +127,31 @@ export default function MapPage() {
               </div>
             )}
 
-            <ComposableMap
-              projection="geoAlbersUsa"
+            <svg
+              viewBox="0 0 975 610"
               style={{ width: '100%', height: 'auto' }}
+              aria-label="US states map"
             >
-              <Geographies geography={GEO_URL}>
-                {({ geographies }) =>
-                  geographies.map(geo => {
-                    const abbr = STATE_ABBR[geo.properties.name as string] ?? ''
-                    const count = byState[abbr]?.length ?? 0
-                    const isSelected = selectedState === abbr
-                    return (
-                      <Geography
-                        key={geo.rsmKey}
-                        geography={geo}
-                        onClick={() => setSelectedState(isSelected ? null : abbr)}
-                        onMouseEnter={() => {
-                          const label = `${geo.properties.name as string} — ${count} ${count === 1 ? 'company' : 'companies'}`
-                          setHovered(label)
-                        }}
-                        onMouseLeave={() => setHovered(null)}
-                        style={{
-                          default: {
-                            fill: stateColor(count, isSelected),
-                            stroke: '#1e2028',
-                            strokeWidth: 0.5,
-                            outline: 'none',
-                          },
-                          hover: {
-                            fill: '#a855f7',
-                            stroke: '#1e2028',
-                            strokeWidth: 0.5,
-                            outline: 'none',
-                            cursor: 'pointer',
-                          },
-                          pressed: { outline: 'none' },
-                        }}
-                      />
-                    )
-                  })
-                }
-              </Geographies>
-            </ComposableMap>
+              {stateFeatures.map(state => {
+                const count = byState[state.abbr]?.length ?? 0
+                const isSelected = selectedState === state.abbr
+                return (
+                  <path
+                    key={state.id}
+                    d={state.path}
+                    fill={stateFill(count, isSelected)}
+                    stroke="#1e2028"
+                    strokeWidth={0.5}
+                    onClick={() => setSelectedState(isSelected ? null : state.abbr)}
+                    onMouseEnter={() =>
+                      setHovered(`${state.name} — ${count} ${count === 1 ? 'company' : 'companies'}`)
+                    }
+                    onMouseLeave={() => setHovered(null)}
+                    style={{ cursor: 'pointer', transition: 'fill 0.15s' }}
+                  />
+                )
+              })}
+            </svg>
 
             {/* Legend */}
             <div className="flex items-center gap-3 mt-1 text-xs text-gray-500 justify-center flex-wrap">
@@ -162,7 +164,10 @@ export default function MapPage() {
                 { color: '#a855f7', label: '10+' },
               ].map(({ color, label }) => (
                 <span key={label} className="flex items-center gap-1">
-                  <span className="inline-block w-3 h-3 rounded-sm border border-gray-700" style={{ background: color }} />
+                  <span
+                    className="inline-block w-3 h-3 rounded-sm border border-gray-700"
+                    style={{ background: color }}
+                  />
                   {label}
                 </span>
               ))}
@@ -177,7 +182,6 @@ export default function MapPage() {
               </div>
             ) : (
               <>
-                {/* State header */}
                 <div className="mb-4 pb-4 border-b border-gray-800">
                   <h2 className="text-lg font-bold text-white">
                     {ABBR_TO_NAME[selectedState] ?? selectedState}
@@ -214,13 +218,9 @@ export default function MapPage() {
                   )}
                 </div>
 
-                {/* Company list */}
                 <div className="space-y-2">
                   {selectedCompanies.map(c => (
-                    <div
-                      key={c.id}
-                      className="bg-gray-800 rounded-lg p-3 flex items-start justify-between gap-2"
-                    >
+                    <div key={c.id} className="bg-gray-800 rounded-lg p-3 flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <p className="text-white text-sm font-medium leading-tight">{c.name}</p>
                         <div className="flex gap-1.5 mt-1.5 flex-wrap">
