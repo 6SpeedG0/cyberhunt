@@ -1,27 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
-export const config = { runtime: 'nodejs20.x' }
-
-export default async function handler(req: Request): Promise<Response> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  let body: { certs?: string[]; clearance?: string; remote?: string; state?: string }
-  try {
-    body = await req.json()
-  } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  }
-
-  const { certs = [], clearance = '', remote = '', state = '' } = body
+  const { certs = [], clearance = '', remote = '', state = '' } = req.body ?? {}
 
   const supabase = createClient(
     process.env.VITE_SUPABASE_URL!,
@@ -34,15 +20,12 @@ export default async function handler(req: Request): Promise<Response> {
     .order('name')
 
   if (error || !companies) {
-    return new Response(JSON.stringify({ error: 'Failed to load companies' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(500).json({ error: 'Failed to load companies' })
   }
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-  const companyList = companies.map(c => ({
+  const companyList = companies.map((c: any) => ({
     n: c.name,
     cat: c.category,
     rem: c.remote,
@@ -85,35 +68,25 @@ Return ONLY a valid JSON array — no markdown, no explanation, no backticks:
     raw = message.content[0].type === 'text' ? message.content[0].text.trim() : ''
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'AI request failed'
-    return new Response(JSON.stringify({ error: msg }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(500).json({ error: msg })
   }
 
-  // Strip markdown code fences if model added them
   const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
   const jsonMatch = cleaned.match(/\[[\s\S]*\]/)
 
   if (!jsonMatch) {
-    return new Response(JSON.stringify({ error: 'Could not parse AI response' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(500).json({ error: 'Could not parse AI response' })
   }
 
   let matches: Array<{ name: string; match_score: number; reasoning: string }>
   try {
     matches = JSON.parse(jsonMatch[0])
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid AI response format' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(500).json({ error: 'Invalid AI response format' })
   }
 
-  const enriched = matches.map(m => {
-    const company = companies.find(c => c.name === m.name)
+  const enriched = matches.map((m: any) => {
+    const company = companies.find((c: any) => c.name === m.name)
     return {
       name: m.name,
       match_score: m.match_score,
@@ -125,8 +98,5 @@ Return ONLY a valid JSON array — no markdown, no explanation, no backticks:
     }
   })
 
-  return new Response(JSON.stringify({ matches: enriched }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  })
+  return res.status(200).json({ matches: enriched })
 }
