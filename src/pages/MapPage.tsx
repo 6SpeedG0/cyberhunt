@@ -28,12 +28,12 @@ const ABBR_TO_NAME = Object.fromEntries(
 )
 
 function stateFill(count: number, selected: boolean): string {
-  if (selected) return '#c084fc'
-  if (count === 0) return '#111318'
-  if (count <= 2) return '#2d1b4e'
-  if (count <= 5) return '#5b21b6'
-  if (count <= 9) return '#7c3aed'
-  return '#a855f7'
+  if (selected) return '#E9D8A6'
+  if (count === 0) return '#005F73'
+  if (count <= 2) return '#0A9396'
+  if (count <= 5) return '#94D2BD'
+  if (count <= 9) return '#EE9B00'
+  return '#CA6702'
 }
 
 const CATEGORY_COLORS: Record<Company['category'], string> = {
@@ -157,11 +157,11 @@ export default function MapPage() {
             <div className="flex items-center gap-3 mt-1 text-xs text-gray-500 justify-center flex-wrap">
               <span>Companies per state:</span>
               {[
-                { color: '#111318', label: '0' },
-                { color: '#2d1b4e', label: '1–2' },
-                { color: '#5b21b6', label: '3–5' },
-                { color: '#7c3aed', label: '6–9' },
-                { color: '#a855f7', label: '10+' },
+                { color: '#005F73', label: '0' },
+                { color: '#0A9396', label: '1–2' },
+                { color: '#94D2BD', label: '3–5' },
+                { color: '#EE9B00', label: '6–9' },
+                { color: '#CA6702', label: '10+' },
               ].map(({ color, label }) => (
                 <span key={label} className="flex items-center gap-1">
                   <span
