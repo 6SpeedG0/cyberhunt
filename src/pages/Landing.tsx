@@ -57,7 +57,7 @@ export default function Landing() {
           <span className="text-[#0A9396]">Hundreds of cyber employers.</span>
         </h1>
 
-        <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mb-8">
+        <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mb-8 text-center">
           CyberHunt aggregates direct career links for cybersecurity jobs — no recruiters,
           no job boards, no noise. Just employers, filtered for your profile.
         </p>
