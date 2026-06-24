@@ -10,14 +10,14 @@ function App() {
   return (
     <div className="min-h-screen">
       <nav className="bg-gray-900 border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 flex items-center gap-8 h-14">
+        <div className="max-w-6xl mx-auto px-4 flex items-center gap-6 h-14">
           <NavLink
             to="/"
-            className="text-purple-400 font-bold text-lg tracking-tight hover:text-purple-300 transition-colors"
+            className="shrink-0 text-purple-400 font-bold text-lg tracking-tight hover:text-purple-300 transition-colors"
           >
             CyberHunt
           </NavLink>
-          <div className="flex gap-6">
+          <div className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-none">
             {navLinks.map(({ to, label }) => (
               <NavLink
                 key={to}

@@ -142,10 +142,10 @@ export default function Directory() {
                 <tr>
                   <th className="text-left px-4 py-3 text-gray-400 font-medium">Company</th>
                   <th className="text-left px-4 py-3 text-gray-400 font-medium">Type</th>
-                  <th className="text-left px-4 py-3 text-gray-400 font-medium">State</th>
+                  <th className="text-left px-4 py-3 text-gray-400 font-medium hidden sm:table-cell">State</th>
                   <th className="text-left px-4 py-3 text-gray-400 font-medium">Work Style</th>
-                  <th className="text-left px-4 py-3 text-gray-400 font-medium">Clearance</th>
-                  <th className="text-left px-4 py-3 text-gray-400 font-medium">Open Roles</th>
+                  <th className="text-left px-4 py-3 text-gray-400 font-medium hidden sm:table-cell">Clearance</th>
+                  <th className="text-left px-4 py-3 text-gray-400 font-medium hidden md:table-cell">Open Roles</th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
@@ -172,7 +172,7 @@ export default function Directory() {
                           {CATEGORY_LABELS[company.category]}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-300 text-xs">
+                      <td className="px-4 py-3 text-gray-300 text-xs hidden sm:table-cell">
                         {company.state === 'national' ? 'National' : company.state}
                       </td>
                       <td className="px-4 py-3">
@@ -180,14 +180,14 @@ export default function Directory() {
                           {REMOTE_LABELS[company.remote]}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm">
+                      <td className="px-4 py-3 text-sm hidden sm:table-cell">
                         {company.clearance_accepted ? (
                           <span className="text-emerald-400 font-medium">Yes</span>
                         ) : (
                           <span className="text-gray-600">—</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-gray-500 text-xs">
+                      <td className="px-4 py-3 text-gray-500 text-xs hidden md:table-cell">
                         {company.open_roles_note ?? '—'}
                       </td>
                       <td className="px-4 py-3">

@@ -62,6 +62,14 @@ body {
   margin: 0;
 }
 
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 h1,
 h2 {
   font-family: var(--heading);
