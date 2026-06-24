@@ -48,13 +48,13 @@ export default function Landing() {
 
       {/* Hero */}
       <div className="text-center mb-16">
-        <div className="inline-block mb-4 text-xs font-medium bg-purple-900/40 text-purple-300 border border-purple-800/50 px-3 py-1 rounded-full">
+        <div className="inline-block mb-4 text-xs font-medium bg-[#005F73]/30 text-[#94D2BD] border border-[#0A9396]/50 px-3 py-1 rounded-full">
           Built in partnership with Cybersecurity Beginners Hub
         </div>
 
         <h1 className="text-4xl sm:text-5xl font-bold text-white mb-5 leading-tight">
           One search.<br />
-          <span className="text-purple-400">Hundreds of cyber employers.</span>
+          <span className="text-[#0A9396]">Hundreds of cyber employers.</span>
         </h1>
 
         <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mb-8">
@@ -64,7 +64,7 @@ export default function Landing() {
 
         <Link
           to="/directory"
-          className="inline-block bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors text-sm"
+          className="inline-block bg-[#94D2BD] hover:bg-[#E9D8A6] text-gray-900 font-semibold px-6 py-3 rounded-lg transition-colors text-sm"
         >
           Find Your Next Cyber Role &rarr;
         </Link>
@@ -74,13 +74,13 @@ export default function Landing() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
         {FEATURES.map(f => (
           <div key={f.to} className="bg-gray-900 border border-gray-800 rounded-xl p-5 flex flex-col">
-            <div className="text-purple-400 mb-3">{f.icon}</div>
+            <div className="text-[#0A9396] mb-3">{f.icon}</div>
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">{f.label}</p>
             <h2 className="text-white font-semibold text-base mb-2 leading-snug">{f.headline}</h2>
             <p className="text-gray-400 text-xs leading-relaxed flex-1 mb-4">{f.body}</p>
             <Link
               to={f.to}
-              className="text-xs text-purple-400 hover:text-purple-300 font-medium transition-colors"
+              className="text-xs text-[#0A9396] hover:text-[#94D2BD] font-medium transition-colors"
             >
               {f.cta} &rarr;
             </Link>

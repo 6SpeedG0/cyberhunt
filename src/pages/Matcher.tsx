@@ -59,7 +59,7 @@ const REMOTE_LABELS: Record<string, string> = {
 }
 
 const SELECT_CLASS =
-  'px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-300 focus:outline-none focus:border-purple-500'
+  'px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-300 focus:outline-none focus:border-[#0A9396]'
 
 export default function Matcher() {
   const [selectedCerts, setSelectedCerts] = useState<string[]>([])
@@ -131,7 +131,7 @@ export default function Matcher() {
                 onClick={() => toggleCert(cert)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                   selectedCerts.includes(cert)
-                    ? 'bg-purple-600 text-white'
+                    ? 'bg-[#94D2BD] text-gray-900'
                     : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-200'
                 }`}
               >
@@ -192,7 +192,7 @@ export default function Matcher() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-purple-600 hover:bg-purple-500 disabled:bg-purple-900 disabled:text-purple-500 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded transition-colors text-sm"
+          className="w-full bg-[#94D2BD] hover:bg-[#E9D8A6] disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-gray-900 font-medium py-2.5 rounded transition-colors text-sm"
         >
           {loading ? 'Finding your matches...' : 'Find My Matches'}
         </button>
@@ -234,7 +234,7 @@ export default function Matcher() {
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <span className="text-purple-400 font-bold text-xl">{m.match_score}</span>
+                    <span className="text-[#0A9396] font-bold text-xl">{m.match_score}</span>
                     <span className="text-gray-600 text-xs">/100</span>
                   </div>
                 </div>
@@ -242,7 +242,7 @@ export default function Matcher() {
                 {/* Score bar */}
                 <div className="h-1 bg-gray-800 rounded-full mb-3">
                   <div
-                    className="h-1 bg-purple-500 rounded-full"
+                    className="h-1 bg-[#E9D8A6] rounded-full"
                     style={{ width: `${m.match_score}%` }}
                   />
                 </div>
@@ -254,7 +254,7 @@ export default function Matcher() {
                     href={m.career_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block text-xs bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded transition-colors"
+                    className="inline-block text-xs bg-[#94D2BD] hover:bg-[#E9D8A6] text-gray-900 px-3 py-1.5 rounded transition-colors"
                   >
                     View Jobs
                   </a>

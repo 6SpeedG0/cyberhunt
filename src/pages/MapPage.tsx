@@ -238,7 +238,7 @@ export default function MapPage() {
                         href={c.career_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="shrink-0 text-xs bg-purple-600 hover:bg-purple-500 text-white px-2.5 py-1.5 rounded transition-colors"
+                        className="shrink-0 text-xs bg-[#94D2BD] hover:bg-[#E9D8A6] text-gray-900 px-2.5 py-1.5 rounded transition-colors"
                       >
                         Jobs
                       </a>

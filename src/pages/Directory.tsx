@@ -36,7 +36,7 @@ const US_STATES = [
 ]
 
 const SELECT_CLASS =
-  'px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-300 focus:outline-none focus:border-purple-500'
+  'px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-300 focus:outline-none focus:border-[#0A9396]'
 
 export default function Directory() {
   const [companies, setCompanies] = useState<Company[]>([])
@@ -98,7 +98,7 @@ export default function Directory() {
           placeholder="Search by company or cert (e.g. CISSP)..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="flex-1 min-w-[220px] px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+          className="flex-1 min-w-[220px] px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#0A9396]"
         />
         <select value={category} onChange={e => setCategory(e.target.value)} className={SELECT_CLASS}>
           <option value="">All Types</option>
@@ -195,7 +195,7 @@ export default function Directory() {
                           href={company.career_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-block text-xs bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded transition-colors whitespace-nowrap"
+                          className="inline-block text-xs bg-[#94D2BD] hover:bg-[#E9D8A6] text-gray-900 px-3 py-1.5 rounded transition-colors whitespace-nowrap"
                         >
                           View Jobs
                         </a>
