@@ -82,7 +82,7 @@ export default async function handler(req: Request): Promise<Response> {
     const rows = failed.map(f => `<tr><td style="padding:4px 8px">${f.name}</td><td style="padding:4px 8px">${f.url}</td><td style="padding:4px 8px">${f.status ?? 'timeout'}</td></tr>`).join('')
     await resend.emails.send({
       from: 'CyberHunt <onboarding@resend.dev>',
-      to: '6speedfun@gmail.com',
+      to: 'jcarter.itprofessional@gmail.com',
       subject: `CyberHunt: ${failed.length} dead link${failed.length > 1 ? 's' : ''} found`,
       html: `<p>Weekly health check found <strong>${failed.length}</strong> broken career URL${failed.length > 1 ? 's' : ''}:</p><table border="1" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px"><thead><tr><th style="padding:4px 8px">Company</th><th style="padding:4px 8px">URL</th><th style="padding:4px 8px">Status</th></tr></thead><tbody>${rows}</tbody></table><p style="color:#666;font-size:12px">Checked ${companies.length} companies on ${today}.</p>`,
     }).catch(err => console.error('[health-check] email failed', err))
