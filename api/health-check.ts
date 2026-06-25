@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { Resend } from 'resend'
 
 const TIMEOUT_MS = 7000
 
@@ -75,6 +76,17 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   console.log('[health-check]', JSON.stringify(summary))
+
+  if (failed.length > 0 && process.env.RESEND_API_KEY) {
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    const rows = failed.map(f => `<tr><td style="padding:4px 8px">${f.name}</td><td style="padding:4px 8px">${f.url}</td><td style="padding:4px 8px">${f.status ?? 'timeout'}</td></tr>`).join('')
+    await resend.emails.send({
+      from: 'CyberHunt <onboarding@resend.dev>',
+      to: '6speedfun@gmail.com',
+      subject: `CyberHunt: ${failed.length} dead link${failed.length > 1 ? 's' : ''} found`,
+      html: `<p>Weekly health check found <strong>${failed.length}</strong> broken career URL${failed.length > 1 ? 's' : ''}:</p><table border="1" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px"><thead><tr><th style="padding:4px 8px">Company</th><th style="padding:4px 8px">URL</th><th style="padding:4px 8px">Status</th></tr></thead><tbody>${rows}</tbody></table><p style="color:#666;font-size:12px">Checked ${companies.length} companies on ${today}.</p>`,
+    }).catch(err => console.error('[health-check] email failed', err))
+  }
 
   return new Response(JSON.stringify(summary), {
     status: 200,
