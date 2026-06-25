@@ -159,14 +159,17 @@ export default function Featured() {
               Put your brand in front of 50,000 cybersecurity professionals. Featured partners get a dedicated showcase card, logo placement, and priority visibility across CyberHunt.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6">
-            <div className="bg-gray-800 rounded-lg px-5 py-3 text-center">
-              <p className="text-[#94D2BD] font-bold text-xl">$250<span className="text-sm font-normal text-gray-400">/mo</span></p>
-              <p className="text-gray-500 text-xs">Featured Listing</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-stretch mb-6">
+            <div className="bg-gray-800 rounded-lg px-6 py-4 text-center">
+              <p className="text-[#94D2BD] font-bold text-2xl">$199<span className="text-sm font-normal text-gray-400">/mo</span></p>
+              <p className="text-white font-medium text-sm mt-1">Directory Listing</p>
+              <p className="text-gray-500 text-xs mt-2 max-w-[180px] mx-auto">Logo, description, career URL, and Featured section placement</p>
             </div>
-            <div className="bg-gray-800 rounded-lg px-5 py-3 text-center">
-              <p className="text-[#94D2BD] font-bold text-xl">$150<span className="text-sm font-normal text-gray-400">/mo</span></p>
-              <p className="text-gray-500 text-xs">Enhanced Profile</p>
+            <div className="bg-gray-800 border border-[#0A9396]/40 rounded-lg px-6 py-4 text-center relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0A9396] text-white text-xs font-semibold px-3 py-0.5 rounded-full">Most Popular</div>
+              <p className="text-[#94D2BD] font-bold text-2xl">$349<span className="text-sm font-normal text-gray-400">/mo</span></p>
+              <p className="text-white font-medium text-sm mt-1">Featured Partner</p>
+              <p className="text-gray-500 text-xs mt-2 max-w-[180px] mx-auto">Everything above + priority placement, contact info, and Featured badge across the site</p>
             </div>
           </div>
           <a
