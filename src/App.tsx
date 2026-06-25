@@ -4,6 +4,7 @@ const navLinks = [
   { to: '/directory', label: 'Directory' },
   { to: '/map', label: 'Map' },
   { to: '/matcher', label: 'Matcher' },
+  { to: '/featured', label: 'Featured' },
 ]
 
 function App() {
