@@ -34,12 +34,12 @@ export default function Featured() {
     <div className="px-6 py-10 max-w-4xl mx-auto">
 
       {/* Header */}
-      <div className="mb-10">
+      <div className="mb-10 text-center">
         <div className="inline-block mb-3 text-xs font-medium bg-[#005F73]/30 text-[#94D2BD] border border-[#0A9396]/50 px-3 py-1 rounded-full">
           Featured Partners
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">Trusted by the Community</h1>
-        <p className="text-gray-400 text-sm max-w-xl">
+        <p className="text-gray-400 text-sm max-w-xl mx-auto">
           Organizations committed to growing the cybersecurity workforce — vetted and endorsed by CyberHunt and the Cybersecurity Beginners Hub.
         </p>
       </div>
@@ -51,7 +51,7 @@ export default function Featured() {
       {!loading && founding && (
         <>
           {/* Founding Partner Hero Card */}
-          <div className="mb-3">
+          <div className="mb-3 text-center">
             <span className="text-xs font-semibold text-amber-400 uppercase tracking-widest">Founding Partner</span>
           </div>
           <div className="bg-gray-900 border border-amber-500/30 rounded-2xl p-8 mb-10 shadow-lg shadow-amber-900/10">
@@ -99,14 +99,16 @@ export default function Featured() {
                 </div>
 
                 {founding.website_url && (
-                  <a
-                    href={founding.website_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-amber-500 hover:bg-amber-400 text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
-                  >
-                    Visit TSCA &rarr;
-                  </a>
+                  <div className="flex justify-center sm:justify-start">
+                    <a
+                      href={founding.website_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-amber-500 hover:bg-amber-400 text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
+                    >
+                      Visit TSCA &rarr;
+                    </a>
+                  </div>
                 )}
               </div>
             </div>
