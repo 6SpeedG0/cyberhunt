@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { track } from '@vercel/analytics'
 
 const CERTS = [
   'Security+', 'CISSP', 'CEH', 'CISM',
@@ -96,6 +97,7 @@ export default function Matcher() {
 
       const data = await res.json() as { matches: MatchResult[] }
       setMatches(data.matches)
+      track('matcher_search', { certs: selectedCerts.join(',') || 'none', clearance: clearance || 'none', remote: remote || 'any', state: state || 'any' })
     } catch (err) {
       if (err instanceof TypeError && err.message.includes('fetch')) {
         setError('AI matching requires a Vercel deployment. Run "vercel dev" locally or deploy to test this feature.')
@@ -255,6 +257,7 @@ export default function Matcher() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block text-xs bg-[#94D2BD] hover:bg-[#E9D8A6] text-gray-900 px-3 py-1.5 rounded transition-colors"
+                    onClick={() => track('view_jobs', { company: m.name, source: 'matcher' })}
                   >
                     View Jobs
                   </a>

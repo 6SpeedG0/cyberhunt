@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { track } from '@vercel/analytics'
 import { supabase } from '../lib/supabase'
 import type { Company } from '../types/company'
 
@@ -196,6 +197,7 @@ export default function Directory() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-block text-xs bg-[#94D2BD] hover:bg-[#E9D8A6] text-gray-900 px-3 py-1.5 rounded transition-colors whitespace-nowrap"
+                          onClick={() => track('view_jobs', { company: company.name, source: 'directory' })}
                         >
                           View Jobs
                         </a>
