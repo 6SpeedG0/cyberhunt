@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { track } from '@vercel/analytics'
+import { supabase } from '../lib/supabase'
 
 const FEATURES = [
   {
@@ -43,6 +46,28 @@ const FEATURES = [
 ]
 
 export default function Landing() {
+  const [email, setEmail] = useState('')
+  const [subState, setSubState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [subError, setSubError] = useState('')
+
+  async function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault()
+    setSubState('loading')
+    setSubError('')
+    const { error } = await supabase.from('subscribers').insert({ email: email.trim().toLowerCase() })
+    if (error) {
+      if (error.code === '23505') {
+        setSubState('success')
+      } else {
+        setSubError('Something went wrong. Try again.')
+        setSubState('error')
+      }
+    } else {
+      track('email_subscribe')
+      setSubState('success')
+    }
+  }
+
   return (
     <div className="px-6 py-12 max-w-4xl mx-auto">
 
@@ -88,6 +113,34 @@ export default function Landing() {
             </Link>
           </div>
         ))}
+      </div>
+
+      {/* Email capture */}
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 mb-8 text-center">
+        <h3 className="text-white font-semibold text-lg mb-1">Stay in the loop</h3>
+        <p className="text-gray-400 text-sm mb-5">Get notified when new employers and features are added.</p>
+        {subState === 'success' ? (
+          <p className="text-[#94D2BD] font-medium text-sm">You're on the list.</p>
+        ) : (
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+            <input
+              type="email"
+              required
+              placeholder="your@email.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="flex-1 bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-4 py-2.5 placeholder-gray-500 focus:outline-none focus:border-[#0A9396]"
+            />
+            <button
+              type="submit"
+              disabled={subState === 'loading'}
+              className="bg-[#94D2BD] hover:bg-[#E9D8A6] text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors disabled:opacity-60"
+            >
+              {subState === 'loading' ? 'Saving...' : 'Notify Me'}
+            </button>
+          </form>
+        )}
+        {subState === 'error' && <p className="text-red-400 text-xs mt-2">{subError}</p>}
       </div>
 
       {/* Footer trust line */}
