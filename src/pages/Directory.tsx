@@ -3,6 +3,100 @@ import { track } from '@vercel/analytics'
 import { supabase } from '../lib/supabase'
 import type { Company } from '../types/company'
 
+type SuggestState = 'idle' | 'loading' | 'success' | 'error'
+
+function SuggestModal({ onClose }: { onClose: () => void }) {
+  const [name, setName] = useState('')
+  const [url, setUrl] = useState('')
+  const [category, setCategory] = useState('')
+  const [notes, setNotes] = useState('')
+  const [state, setState] = useState<SuggestState>('idle')
+  const [errMsg, setErrMsg] = useState('')
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setState('loading')
+    try {
+      const res = await fetch('/api/suggest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ company_name: name, career_url: url, category, notes }),
+      })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({})) as { error?: string }
+        throw new Error(d.error ?? 'Failed to submit')
+      }
+      track('company_suggested', { category })
+      setState('success')
+    } catch (err) {
+      setErrMsg(err instanceof Error ? err.message : 'Something went wrong')
+      setState('error')
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4" onClick={onClose}>
+      <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-white font-semibold text-lg">Suggest a Company</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-white text-xl leading-none">&times;</button>
+        </div>
+
+        {state === 'success' ? (
+          <div className="text-center py-6">
+            <p className="text-[#94D2BD] font-medium mb-1">Thanks for the suggestion!</p>
+            <p className="text-gray-400 text-sm">We'll review it and add it to the directory.</p>
+            <button onClick={onClose} className="mt-4 text-sm text-gray-500 hover:text-white">Close</button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-gray-400 text-xs mb-1">Company Name <span className="text-red-400">*</span></label>
+              <input required value={name} onChange={e => setName(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-[#0A9396]"
+                placeholder="Acme Cyber Inc." />
+            </div>
+            <div>
+              <label className="block text-gray-400 text-xs mb-1">Career Page URL</label>
+              <input type="url" value={url} onChange={e => setUrl(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-[#0A9396]"
+                placeholder="https://company.com/careers" />
+            </div>
+            <div>
+              <label className="block text-gray-400 text-xs mb-1">Category</label>
+              <select value={category} onChange={e => setCategory(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-[#0A9396]">
+                <option value="">Not sure</option>
+                <option value="govcon">GovCon</option>
+                <option value="vendor">Vendor</option>
+                <option value="consulting">Consulting</option>
+                <option value="staffing">Staffing</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-400 text-xs mb-1">Notes (optional)</label>
+              <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2}
+                className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-[#0A9396] resize-none"
+                placeholder="Why should this company be listed?" />
+            </div>
+            {state === 'error' && <p className="text-red-400 text-xs">{errMsg}</p>}
+            <div className="flex gap-2 pt-1">
+              <button type="button" onClick={onClose}
+                className="flex-1 text-sm text-gray-400 hover:text-white border border-gray-700 rounded-lg py-2 transition-colors">
+                Cancel
+              </button>
+              <button type="submit" disabled={state === 'loading'}
+                className="flex-1 bg-[#94D2BD] hover:bg-[#E9D8A6] text-gray-900 font-semibold text-sm rounded-lg py-2 transition-colors disabled:opacity-60">
+                {state === 'loading' ? 'Submitting...' : 'Submit'}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  )
+}
+
 const CATEGORY_LABELS: Record<Company['category'], string> = {
   govcon: 'GovCon',
   vendor: 'Vendor',
@@ -44,6 +138,7 @@ export default function Directory() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [showSuggest, setShowSuggest] = useState(false)
   const [category, setCategory] = useState('')
   const [stateFilter, setStateFilter] = useState('')
   const [remoteFilter, setRemoteFilter] = useState('')
@@ -86,11 +181,22 @@ export default function Directory() {
   return (
     <div className="text-left px-6 py-8 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white mb-1">Cyber Job Directory</h1>
-        <p className="text-gray-400 text-sm">
-          Direct career links to top cybersecurity employers — no recruiters, no middlemen.
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-1">Cyber Job Directory</h1>
+            <p className="text-gray-400 text-sm">
+              Direct career links to top cybersecurity employers — no recruiters, no middlemen.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowSuggest(true)}
+            className="shrink-0 text-xs bg-gray-800 hover:bg-gray-700 text-[#94D2BD] border border-gray-700 px-3 py-2 rounded-lg transition-colors whitespace-nowrap"
+          >
+            + Suggest a Company
+          </button>
+        </div>
       </div>
+      {showSuggest && <SuggestModal onClose={() => setShowSuggest(false)} />}
 
       {/* Filter bar */}
       <div className="flex flex-wrap gap-3 mb-4">
