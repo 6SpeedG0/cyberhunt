@@ -39,9 +39,11 @@ export default function Featured() {
           Featured Partners
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">Trusted by the Community</h1>
-        <p className="text-gray-400 text-sm max-w-xl mx-auto">
-          Organizations committed to growing the cybersecurity workforce — vetted and endorsed by CyberHunt and the Cybersecurity Beginners Hub.
-        </p>
+        <div className="max-w-xl mx-auto">
+          <p className="text-gray-400 text-sm">
+            Organizations committed to growing the cybersecurity workforce — vetted and endorsed by CyberHunt and the Cybersecurity Beginners Hub.
+          </p>
+        </div>
       </div>
 
       {loading && (
@@ -55,7 +57,7 @@ export default function Featured() {
             <span className="text-xs font-semibold text-amber-400 uppercase tracking-widest">Founding Partner</span>
           </div>
           <div className="bg-gray-900 border border-amber-500/30 rounded-2xl p-8 mb-10 shadow-lg shadow-amber-900/10">
-            <div className="flex flex-col sm:flex-row gap-6 items-start">
+            <div className="flex flex-col sm:flex-row gap-6 items-start mb-6">
 
               {/* Logo */}
               {founding.logo_url && (
@@ -79,7 +81,7 @@ export default function Featured() {
                 )}
 
                 {/* Contact row */}
-                <div className="flex flex-wrap gap-3 text-xs text-gray-400 mb-5">
+                <div className="flex flex-wrap gap-3 text-xs text-gray-400">
                   {founding.phone && (
                     <span className="flex items-center gap-1">
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,21 +99,22 @@ export default function Featured() {
                     </a>
                   )}
                 </div>
-
-                {founding.website_url && (
-                  <div className="flex justify-center sm:justify-start">
-                    <a
-                      href={founding.website_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block bg-amber-500 hover:bg-amber-400 text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
-                    >
-                      Visit TSCA &rarr;
-                    </a>
-                  </div>
-                )}
               </div>
             </div>
+
+            {/* Visit button — centered across full card width */}
+            {founding.website_url && (
+              <div className="text-center">
+                <a
+                  href={founding.website_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-amber-500 hover:bg-amber-400 text-gray-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
+                >
+                  Visit TSCA &rarr;
+                </a>
+              </div>
+            )}
           </div>
         </>
       )}
@@ -151,9 +154,11 @@ export default function Featured() {
       {!loading && (
         <div className="bg-gray-900 border border-[#0A9396]/40 rounded-2xl p-8 text-center">
           <h3 className="text-white font-bold text-xl mb-2">Get Your Company Featured</h3>
-          <p className="text-gray-400 text-sm max-w-lg mx-auto mb-6">
-            Put your brand in front of 50,000 cybersecurity professionals. Featured partners get a dedicated showcase card, logo placement, and priority visibility across CyberHunt.
-          </p>
+          <div className="max-w-lg mx-auto mb-6">
+            <p className="text-gray-400 text-sm">
+              Put your brand in front of 50,000 cybersecurity professionals. Featured partners get a dedicated showcase card, logo placement, and priority visibility across CyberHunt.
+            </p>
+          </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6">
             <div className="bg-gray-800 rounded-lg px-5 py-3 text-center">
               <p className="text-[#94D2BD] font-bold text-xl">$250<span className="text-sm font-normal text-gray-400">/mo</span></p>
