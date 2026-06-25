@@ -5,6 +5,7 @@ import Directory from './pages/Directory'
 import MapPage from './pages/MapPage'
 import Matcher from './pages/Matcher'
 import Featured from './pages/Featured'
+import LearnHub from './pages/LearnHub'
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
       { path: 'map', element: <MapPage /> },
       { path: 'matcher', element: <Matcher /> },
       { path: 'featured', element: <Featured /> },
+      { path: 'learn', element: <LearnHub /> },
     ],
   },
 ])
