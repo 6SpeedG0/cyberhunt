@@ -1,11 +1,25 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, '1 h'),
+})
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
+
+  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() ?? 'anonymous'
+  const { success, remaining } = await ratelimit.limit(ip)
+  if (!success) {
+    return res.status(429).json({ error: 'Too many requests. Try again in an hour.', remaining: 0 })
+  }
+  res.setHeader('X-RateLimit-Remaining', remaining)
 
   const { certs = [], clearance = '', remote = '', state = '' } = req.body ?? {}
 
